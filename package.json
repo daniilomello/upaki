@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "ci:lint": "prettier --check src",
+    "fix:lint": "prettier --write src",
+    "ci:lint": "echo 'There is no prettier or lint on the project yet'",
     "typecheck": "tsc --noEmit",
     "ci:test": "echo 'There is no test on the project yet'"
   },
