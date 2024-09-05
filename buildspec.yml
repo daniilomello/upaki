@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+
+  pre_build:
+    commands:
+      - npm pkg delete scripts.prepare
+      - yarn install --lock-file
+
+  build:
+    commands:
+      - yarn build
+
+  post_build:
+    commands:
+      - aws s3 sync --delete ./dist s3://${DEPLOY_BUCKET}
+      - aws cloudfront create-invalidation --distribution-id ${CF_ID} --paths '/index.html'
