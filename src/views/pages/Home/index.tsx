@@ -19,6 +19,11 @@ export function Home() {
   const [uploads, setUploads] = useState<IUpload[]>([]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    maxFiles: 4,
+    maxSize: 2000000, // 2MB
+    accept: {
+      'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.avif'],
+    },
     onDrop: (acceptedFiles) => {
       setUploads(prevState => prevState.concat(
         acceptedFiles.map(file => ({
@@ -26,6 +31,9 @@ export function Home() {
           progress: 0
         }))
       ));
+    },
+    onDropRejected: () => {
+      toast.error('Não foi possível carregar esse arquivo!');
     }
   });
 
@@ -41,6 +49,30 @@ export function Home() {
     try {
       setIsLoading(true);
 
+      // Faz a validação dos arquivos
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml', 'image/avif'];
+      const maxFileSize = 2 * 1024 * 1024; // 2MB
+
+      const validUploads = uploads.filter(({ file }) => {
+        if (!allowedTypes.includes(file.type)) {
+          toast(`O arquivo ${file.name} tem um tipo inválido.`);
+          return false;
+        }
+
+        if (file.size > maxFileSize) {
+          toast(`O arquivo ${file.name} excede o tamanho de 2MB.`);
+          return false;
+        }
+
+        return true;
+      });
+
+      if (validUploads.length === 0) {
+        setIsLoading(false);
+        return;
+      }
+
+      // Gerar a URL de upload
       const uploadsObjects = await Promise.all(
         uploads.map(async ({ file }) => (
           {
@@ -50,6 +82,7 @@ export function Home() {
         ))
       );
 
+      // Faz o upload das imagens no s3
       const response = await Promise.allSettled(
         uploadsObjects.map(({ url, file }, index) => (
           uploadFile(url, file, (progress) => {
@@ -68,6 +101,7 @@ export function Home() {
         ))
       );
 
+      // Exibe um erro caso o envio do arquivo falhe
       response.forEach((res, index) => {
         if (res.status === 'rejected') {
           const fileWithError = uploads[index].file;
@@ -106,7 +140,7 @@ export function Home() {
             Solte seus arquivos aqui!
           </span>
           <small className="text-sm text-muted-foreground opacity-30">
-            Envie qualquer arquivo para a nuvem
+            Envie apenas 4 imagens de até 2MB por vez
           </small>
         </div>
 
