@@ -1,2 +1,1 @@
-TODO: Create Documentation
-TODO: Add Lambda URL to enviroment variables
+A Documentação mais braba de todos os tempos está em construção...

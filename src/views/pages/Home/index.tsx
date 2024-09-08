@@ -124,7 +124,7 @@ export function Home() {
     <div className="min-h-screen flex justify-center py-20 px-6">
       <div className="w-full max-w-xl">
         <div className="w-full flex justify-center items-center mb-5">
-          <Logo />
+          <Logo className='invert dark:invert-0' />
         </div>
         <div {...getRootProps()} className={
           cn(
