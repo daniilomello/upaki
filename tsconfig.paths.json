@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
     "paths": {
+      "@/*": ["./src/*"],
       "@app/*": ["./src/app/*"],
-      "@views/*": ["./src/views/*"]
+      "@views/*": ["./src/views/*"],
+      "@components/*": ["./src/views/components/*"]
     }
   }
 }
